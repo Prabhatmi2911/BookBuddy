@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookStore - Your Literary Haven</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar h1 {
+            color: #667eea;
+            font-size: 2rem;
+            display: inline-block;
+        }
+
+        .nav-links {
+            float: right;
+            margin-top: 10px;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 600;
+            transition: color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            color: white;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            opacity: 0.95;
+        }
+
+        .category-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .category-header h3 {
+            font-size: 2rem;
+            color: #667eea;
+            text-transform: capitalize;
+        }
+
+        .view-all {
+            background: #667eea;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .view-all:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .product-rating {
+            color: #ffa500;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            color: #667eea;
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        .buy-button {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .buy-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .buy-button:active {
+            transform: scale(0.98);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .error {
+            background: #ff6b6b;
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        .category-page {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .category-page h2 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 2rem;
+            text-transform: capitalize;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 1rem;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #764ba2;
+            transform: translateX(-5px);
+        }
+
+        .info-message {
+            background: #4CAF50;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 2rem;
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        .info-message code {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📚 BookBuddy.ai</h1>
+        <div class="nav-links">
+            <a onclick="showPage('home')">Home</a>
+            <a onclick="showCategoryPage('arts')">Arts</a>
+            <a onclick="showCategoryPage('adventure')">Adventure</a>
+            <a onclick="showCategoryPage('bussiness')">Bussiness</a>
+            <a onclick="showCategoryPage('biography')">Biography</a>
+            <a onclick="showCategoryPage('crime')">Crime</a>
+        </div>
+    </div>
+
+    <div id="home" class="page-content active">
+        <div class="hero">
+            <h2>Discover Your Next Great Read</h2>
+            <p>Explore thousands of books across all genres</p>
+        </div>
+
+        <div class="container" id="homeContainer">
+            <div class="loading">Loading books...</div>
+        </div>
+    </div>
+
+    <div id="categoryPage" class="page-content">
+        <div class="container">
+            <div class="category-page">
+                <a class="back-btn" onclick="showPage('home')">← Back to Home</a>
+                <h2 id="categoryTitle"></h2>
+                <div class="products-grid" id="categoryProducts"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const categories = ['arts', 'adventure', 'bussiness', 'biography', 'crime'];
+        let booksData = {};
+
+        async function loadBooks() {
+            const homeContainer = document.getElementById('homeContainer');
+            homeContainer.innerHTML = '';
+
+            for (const category of categories) {
+                try {
+                    const response = await fetch(`${category}.json`);
+                    
+                    if (!response.ok) {
+                        throw new Error(`File not found: ${category}.json`);
+                    }
+                    
+                    const books = await response.json();
+                    booksData[category] = books;
+
+                    const section = document.createElement('div');
+                    section.className = 'category-section';
+                    
+                    const header = document.createElement('div');
+                    header.className = 'category-header';
+                    header.innerHTML = `
+                        <h3>${category}</h3>
+                        <a class="view-all" onclick="showCategoryPage('${category}')">View All →</a>
+                    `;
+                    section.appendChild(header);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'products-grid';
+                    
+                    const displayBooks = books.slice(0, 4);
+                    displayBooks.forEach(book => {
+                        grid.appendChild(createProductCard(book));
+                    });
+
+                    section.appendChild(grid);
+                    homeContainer.appendChild(section);
+
+                } catch (error) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error';
+                    errorDiv.innerHTML = `
+                        <strong>Error loading ${category}.json</strong><br>
+                        ${error.message}<br>
+                        <small>Make sure the file exists in the same folder as this HTML file</small>
+                    `;
+                    homeContainer.appendChild(errorDiv);
+                }
+            }
+
+            if (Object.keys(booksData).length === 0) {
+                homeContainer.innerHTML = `
+                    <div class="info-message">
+                        <h3>📁 Setup Instructions</h3>
+                        <p><strong>This website needs to be run on a local web server to work properly.</strong></p>
+                        <p>Modern browsers block loading local JSON files for security reasons.</p>
+                        <br>
+                        <p><strong>Quick Setup Options:</strong></p>
+                        <p>1. <strong>Using Python:</strong> Open terminal in this folder and run:<br>
+                        <code>python -m http.server 8000</code><br>
+                        Then visit: <code>http://localhost:8000</code></p>
+                        <br>
+                        <p>2. <strong>Using VS Code:</strong> Install "Live Server" extension and click "Go Live"</p>
+                        <br>
+                        <p>3. <strong>Using Node.js:</strong> Install http-server globally:<br>
+                        <code>npm install -g http-server</code><br>
+                        Run: <code>http-server</code></p>
+                        <br>
+                        <p>Make sure your JSON files (<code>arts.json</code>, <code>adventure.json</code>, etc.) are in the same folder!</p>
+                    </div>
+                `;
+            }
+        }
+
+        function createProductCard(book) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            
+            card.innerHTML = `
+                <img src="${book['Product Image']}" alt="Book Cover" class="product-image" onerror="this.src='https://via.placeholder.com/220x280?text=No+Image'">
+                <div class="product-rating">${book['Rating'] || 'No rating'}</div>
+                <div class="product-price">₹${book['price']}</div>
+                <button class="buy-button" onclick="window.open('${book['Product Link']}', '_blank'); event.stopPropagation();">Buy Now</button>
+            `;
+            
+            return card;
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function showCategoryPage(category) {
+            const categoryProducts = document.getElementById('categoryProducts');
+            const categoryTitle = document.getElementById('categoryTitle');
+            
+            categoryTitle.textContent = category;
+            categoryProducts.innerHTML = '';
+
+            if (booksData[category]) {
+                booksData[category].forEach(book => {
+                    categoryProducts.appendChild(createProductCard(book));
+                });
+            } else {
+                categoryProducts.innerHTML = '<div class="error">No books found in this category</div>';
+            }
+
+            showPage('categoryPage');
+        }
+
+        loadBooks();
+    </script>
+    <script>
+  window.watsonAssistantChatOptions = {
+    integrationID: "e81e5444-98fb-4a37-8158-85ea680c75db", // The ID of this integration.
+    region: "au-syd", // The region your integration is hosted in.
+    serviceInstanceID: "a861972c-705c-417c-b41b-c9bcdbc6152c", // The ID of your service instance.
+    onLoad: async (instance) => { await instance.render(); }
+  };
+  setTimeout(function(){
+    const t=document.createElement('script');
+    t.src="https://web-chat.global.assistant.watson.appdomain.cloud/versions/" + (window.watsonAssistantChatOptions.clientVersion || 'latest') + "/WatsonAssistantChatEntry.js";
+    document.head.appendChild(t);
+  });
+</script>
+</body>
+</html>
