@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=1024, initial-scale=1.0">
     <title>BookStore - Your Literary Haven</title>
     <style>
         * {
@@ -10,8 +10,15 @@
             padding: 0;
             box-sizing: border-box;
         }
+        @media only screen and (max-width: 768px){
+            html, body{
+                min-width: 1024px;
+                overflow-x: auto;
+            }
+        }
 
         body {
+            
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -275,6 +282,19 @@
             font-family: monospace;
         }
     </style>
+    <script>
+        if (/Mobi|Android/i.test(navigator.userAgent)) {
+      let viewport = document.querySelector("meta[name=viewport]");
+      if (viewport) {
+        viewport.setAttribute("content", "width=1024, initial-scale=1.0");
+      } else {
+        let meta = document.createElement("meta");
+        meta.name = "viewport";
+        meta.content = "width=1024, initial-scale=1.0";
+        document.head.appendChild(meta);
+      }
+    }
+    </script>
 </head>
 <body>
     <div class="navbar">
@@ -441,5 +461,7 @@
     document.head.appendChild(t);
   });
 </script>
+
 </body>
+
 </html>
